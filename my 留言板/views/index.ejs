@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Bootstrap 101 Template</title>
+		<style type="text/css">
+			#success,#defeat,#warning{
+				display:none;
+				
+			}
+			.muban{
+				width: 900px;
+				margin-left: 110px;
+			}
+		</style>
+    <!-- Bootstrap -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <h1>你好，请留言</h1>
+    <br />
+    <br />
+    <br />
+    <form class="form-horizontal">
+  <div class="form-group">
+    <label for="name" class="col-sm-2 control-label" > 姓名</label>
+    <div class="col-sm-8 col-lg-5">
+      <input type="text" class="form-control" id="name" name="name" placeholder="姓名">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="words" class="col-sm-2 control-label" >留言</label>
+    <div class="col-sm-8 col-lg-5">
+      <textarea class="form-control" rows="3" name="words" id="words"></textarea>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button id="submit" type="button" class="btn btn-success">提交</button>
+    </div>
+  </div>
+  <div class="alert alert-success" role="alert" id="success">留言发表成功</div>
+  <div class="alert alert-warning" role="alert" id="defeat">留言发表失败</div>
+  <div class="alert alert-danger" role="alert" id="warning">请输入合适的留言</div>
+</form>
+		
+		<!--留言显示区-->
+		<div id="liuyanqu">
+			<!--占位置的-->
+		</div>
+		
+		
+		<script type="text/template" id="moban">
+			
+			<!--使用模板引擎-->
+			<div class="muban">
+				<div class="list-group " >
+					<div id="liuyankuai">
+						<a href="#" class="list-group-item active">
+					    <h4 class="list-group-item-heading">{{= name}}</h4>
+					    <p class="list-group-item-text">{{= words}}</p>
+				  	</a>
+					</div>
+				</div>  
+			</div>			
+		</script>
+		
+		<!--引入underscore.js 模板引擎-->
+		<script type="text/javascript" src="./js/underscore.no-flect.js"></script>
+			
+		
+		
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+    	
+    	//ajax 获得数据
+    	$.get('/du',function(result){
+    		//接受的result（形参）  是一个对象 {}，key值为result（不是形参）   格式为{'result'：[{json}]}
+    		//得到模板
+    		var compiled = _.template($("#moban").html());
+    		
+    		//遍历数组result
+    		for(var i=0;i<result.result.length;i++){
+    			//数据绑定
+    			var html = compiled({'name':result.result[i].name,'words':result.result[i].words});
+    			//dom操作
+    			$('#liuyanqu').append($(html));
+    		}
+    	})
+    	
+    	//ajax发送表单
+    	$('#submit').click(function(){
+    		
+    		//进制发送空数据
+    		if($('#name').val() ==''){
+    			$('#warning').fadeIn();
+    			return;
+    		}
+    		//每次输入文本是清除警告框
+    		$('#name').keydown(function(){
+    			$('#success').hide();
+    			$('#defeat').hide();
+    			$('#warning').hide();
+    		})
+    		
+    		$.post('/submit',{
+    		'name':$('#name').val(),
+    		'words':$('#words').val()
+    		},function(result){
+    			if(result.result = 1){
+    				$('#success').fadeIn();
+    				//点击提交后清空input框
+    				
+    				$('#name').val('');
+    				$('#words').val('');
+    			} else if(result.result = -1){
+    				$('#defeat').fadeIn();
+    				//点击提交后清空input框
+    				$('#name').val('');
+    				$('#words').val('');
+    			}
+    		});
+    	})
+    	
+    	
+    	
+    	
+    </script>
+  </body>
+</html>
