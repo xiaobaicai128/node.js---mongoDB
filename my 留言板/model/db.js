@@ -52,7 +52,7 @@ if (arguments.length == 3) {
 	var result = []; //设置接受结果的数组
 	_connectDB(function(err,db){
 		
-		var cursor = db.collection(collectionName).find(json).limit(limit).skip(skipnumber);
+		var cursor = db.collection(collectionName).find(json).limit(limit).skip(skipnumber).sort(sort);
 		cursor.each(function(err,doc){
 			if(err){
 				callback(err,null);
@@ -92,6 +92,22 @@ exports.updateMany = function(collectionName,json1,json2,callback){
 				return;
 			}
 			callback(null,result);
+			db.close();
+		})
+	})
+}
+
+//得到数据总数
+exports.getAllCount = function(collectionName,callback){
+	_connectDB(function(err,db){
+//		db.collection(collectionName).count(json,function(err,count){
+		db.collection(collectionName).count({}).then(function(count){	
+			if(err){
+				callback(err,null);
+				db.close();
+				return;
+			}
+			callback(null,count);
 			db.close();
 		})
 	})

@@ -60,7 +60,29 @@
 			<!--占位置的-->
 		</div>
 		
-		
+		<!--分页-->
+		<nav aria-label="Page navigation">
+		  <ul class="pagination">
+		    <li>
+		      <a href="#" aria-label="Previous">
+		        <span aria-hidden="true">&laquo;</span>
+		      </a>
+		    </li>
+		    
+		    <!--为了显示出具体页数 所以要i加一-->
+		    <%for(var i=0;i<pageamount;i++){%>
+		    <li class="pagenumber" class="active" data-page=<%=i+1%>><a href="#"><%=i+1%></a></li>
+		    <%}%>
+		   
+		    <li >
+		      <a href="#" aria-label="Next">
+		        <span aria-hidden="true">&raquo;</span>
+		      </a>
+		    </li>
+		  </ul>
+		</nav>
+
+
 		<script type="text/template" id="moban">
 			
 			<!--使用模板引擎-->
@@ -68,8 +90,9 @@
 				<div class="list-group " >
 					<div id="liuyankuai">
 						<a href="#" class="list-group-item active">
-					    <h4 class="list-group-item-heading">{{= name}}</h4>
+					    <h4 class="list-group-item-heading">{{= name}}:</h4>
 					    <p class="list-group-item-text">{{= words}}</p>
+					    <p class="list-group-item-text">【留言时间】{{= time}}</p>
 				  	</a>
 					</div>
 				</div>  
@@ -87,20 +110,42 @@
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
     	
-    	//ajax 获得数据
-    	$.get('/du',function(result){
-    		//接受的result（形参）  是一个对象 {}，key值为result（不是形参）   格式为{'result'：[{json}]}
-    		//得到模板
-    		var compiled = _.template($("#moban").html());
-    		
-    		//遍历数组result
-    		for(var i=0;i<result.result.length;i++){
-    			//数据绑定
-    			var html = compiled({'name':result.result[i].name,'words':result.result[i].words});
-    			//dom操作
-    			$('#liuyanqu').append($(html));
-    		}
+    	
+    	//局部刷新  添加监听事件
+    	$('.pagenumber').click(function(){
+    		var nowpage = parseInt( $(this).attr('data-page')) ;
+    		//清空全部留言中的所有节点
+            $("#liuyanqu").html("");
+    		//重新发送请求
+    		getData(nowpage);
+    		//本页码加上active选中模式，其他排除
+    		$(this).addClass("active").siblings().removeClass("active");
     	})
+    	
+    //默认请求第一页数据
+    	getData(1);
+    		//给第一个页面，补一个active
+    	$(".pagenumber:first").addClass("active");
+    		//ajax 获得数据
+    	function getData(page){
+    		
+	    		$.get('/du?page='+ (page - 1),function(result){
+	    		//接受的result（形参）  是一个对象 {}，key值为result（不是形参）   格式为{'result'：[{json}]}
+	    		
+	    		
+	    		//得到模板
+		    		var compiled = _.template($("#moban").html());
+
+		    		//遍历数组result
+		    		for(var i=0;i<result.result.length;i++){
+		    			//数据绑定
+		    			var html = compiled({'name':result.result[i].name,'words':result.result[i].words,'time':result.result[i].time});
+		    			//dom操作
+		    			$('#liuyanqu').append($(html));
+		    		}
+	    		})
+    	}
+    	
     	
     	//ajax发送表单
     	$('#submit').click(function(){
@@ -111,7 +156,7 @@
     			return;
     		}
     		//每次输入文本是清除警告框
-    		$('#name').keydown(function(){
+    		$('#name').focus(function(){
     			$('#success').hide();
     			$('#defeat').hide();
     			$('#warning').hide();
@@ -122,13 +167,20 @@
     		'words':$('#words').val()
     		},function(result){
     			if(result.result = 1){
-    				$('#success').fadeIn();
+    				$('#success').fadeIn();//数据提交成功 但需要页面刷新后才能通过ajax显示
+    																// 所以 通过dom 在页面上做一个假的替代
+    				var compiled = _.template($("#moban").html());
+		    			//数据绑定
+		    		var html = compiled({'name':$('#name').val(),'words':$('#words').val(),'time':new Date()});
+		    			//dom操作
+		    			$(html).insertBefore($('#liuyanqu'));
     				//点击提交后清空input框
     				
     				$('#name').val('');
     				$('#words').val('');
     			} else if(result.result = -1){
-    				$('#defeat').fadeIn();
+    				$('#defeat').fadeIn(); 
+    				
     				//点击提交后清空input框
     				$('#name').val('');
     				$('#words').val('');

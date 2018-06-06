@@ -10,12 +10,18 @@ app.set('view engine','ejs');
 app.use(express.static('./public'));
 
 app.get('/',function(req,res,next){
-	res.render('index.ejs')
+	db.getAllCount('liuyanben',function(err,count){
+		res.render('index.ejs',{
+		'pageamount': Math.ceil(count/6)
+		})
+	})
+	
 })
  
  //得到数据
 app.get('/du',function(req,res,next){
-	db.find('liuyanben',{},function(err,result){  //返回的result 是数组（ 自己封装的）
+	var page = parseInt(req.query.page);
+	db.find('liuyanben',{},{'sort':{'time':-1},'pageamount':6,'page':page},function(err,result){  //返回的result 是数组（ 自己封装的）
 		if(err){
 			next();
 			return;
@@ -29,7 +35,8 @@ app.post('/submit',function(req,res,next){
 	form.parse(req,function(err,fields){
 		db.insertOne('liuyanben',{   //将数据提交给数据库
 			"name":fields.name,
-			'words':fields.words
+			'words':fields.words,
+			"time": new Date()
 		},function(err,result){ //之后提交给ajax
 			if(err){
 				res.json(-1); //发给ajax的  res.json() 对ajax产生回馈
@@ -42,6 +49,16 @@ app.post('/submit',function(req,res,next){
 	})
 })
 
+//得到数据总数量
+app.get('/count',function(req,res){
+	db.getAllCount('liuyanben',function(err,count){
+		if(err){
+			next();
+			return;
+		}
+		res.send(count.toString());
+	})
+})
 
 
 //设置404
