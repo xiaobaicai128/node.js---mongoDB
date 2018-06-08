@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var db = require('./model/db.js'); //自己封装的关于数据库增删改查的函数
 var formidable = require('formidable');
-
+var ObjectId = require('mongodb').ObjectID;
 
 //设置模板引擎
 app.set('view engine','ejs');
@@ -60,6 +60,16 @@ app.get('/count',function(req,res){
 	})
 })
 
+app.get('/remove',function(req,res,next){
+	var id = req.query.id;
+	db.deleteMany('liuyanben',{'_id':ObjectId(id)},function(err,result){
+		if(err){
+			next();
+			return;
+		}
+		res.redirect('/');
+	})
+})
 
 //设置404
 app.use(function(req,res){

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>Bootstrap 101 Template</title>
+    <title>留言板</title>
 		<style type="text/css">
 			#success,#defeat,#warning{
 				display:none;
@@ -90,15 +90,33 @@
 				<div class="list-group " >
 					<div id="liuyankuai">
 						<a href="#" class="list-group-item active">
+							<p >【id】 {{= id}}</p>
 					    <h4 class="list-group-item-heading">{{= name}}:</h4>
 					    <p class="list-group-item-text">{{= words}}</p>
 					    <p class="list-group-item-text">【留言时间】{{= time}}</p>
+					    <p><a href="/remove?id={{= id}}" class="remove" >删除</a></p>
+				  	</a>
+					</div>
+				</div>  
+			</div>	
+			
+			
+		</script>
+		<script type="text/template" id="other-moban">
+			<div class="muban">
+				<div class="list-group " >
+					<div id="liuyankuai">
+						<a href="#" class="list-group-item active">
+							
+					    <h4 class="list-group-item-heading">{{= name}}:</h4>
+					    <p class="list-group-item-text">{{= words}}</p>
+					    <p class="list-group-item-text">【留言时间】{{= time}}</p>
+					    
 				  	</a>
 					</div>
 				</div>  
 			</div>			
-		</script>
-		
+		</script>	
 		<!--引入underscore.js 模板引擎-->
 		<script type="text/javascript" src="./js/underscore.no-flect.js"></script>
 			
@@ -139,7 +157,7 @@
 		    		//遍历数组result
 		    		for(var i=0;i<result.result.length;i++){
 		    			//数据绑定
-		    			var html = compiled({'name':result.result[i].name,'words':result.result[i].words,'time':result.result[i].time});
+		    			var html = compiled({'name':result.result[i].name,'words':result.result[i].words,'time':result.result[i].time,'id':result.result[i]._id});
 		    			//dom操作
 		    			$('#liuyanqu').append($(html));
 		    		}
@@ -169,9 +187,9 @@
     			if(result.result = 1){
     				$('#success').fadeIn();//数据提交成功 但需要页面刷新后才能通过ajax显示
     																// 所以 通过dom 在页面上做一个假的替代
-    				var compiled = _.template($("#moban").html());
+    				var compiled = _.template($("#other-moban").html());
 		    			//数据绑定
-		    		var html = compiled({'name':$('#name').val(),'words':$('#words').val(),'time':new Date()});
+		    		var html = compiled({'name':$('#name').val(),'words':$('#words').val(),'time':new Date()}); 
 		    			//dom操作
 		    			$(html).insertBefore($('#liuyanqu'));
     				//点击提交后清空input框
@@ -188,7 +206,8 @@
     		});
     	})
     	
-    	
+  
+    
     	
     	
     </script>
