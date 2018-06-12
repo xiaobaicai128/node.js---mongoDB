@@ -1,0 +1,14 @@
+{
+  "name": "",
+  "version": "",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "formidable": "^1.2.1",
+    "gm": "^1.23.1",
+    "md5": "^2.2.1",
+    "mongodb": "^2.2.33",
+    "session": "^0.1.0"
+  }
+}
