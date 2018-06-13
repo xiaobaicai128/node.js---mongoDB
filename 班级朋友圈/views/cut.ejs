@@ -45,7 +45,12 @@
             "x" : x,
             "y" : y
 		},function(result){
-			alert(result)
+			console.log(result)
+			if(result == '4'){
+				alert('上传成功！');
+				window.location = '/';
+			}
+
 		})
     });
 </script>

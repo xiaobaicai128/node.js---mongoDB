@@ -36,7 +36,25 @@
 		
 		color: gray;
 	}
-	
+	.pic{
+		width: 100px;
+		height: 100px;
+		border: solid 1px gray;
+		border-radius: 50%;
+		overflow: hidden;
+		margin-top: 10px;
+		
+	}
+	.say{
+		color: gray;
+		font-size: 1.7em;
+		float: right;
+		font-family: '隶书';
+		
+	}
+	h5{
+		display: inline;
+	}
 </style>
     <title>my 朋友圈</title>
 
@@ -103,23 +121,12 @@
         				</ul>
 				      </div>  -->
 				      <div class="show">
-				        <a href="/setavatar"><div class="welcome">个人管理</div></a>
-				        <a href="#"><div class="set">欢迎回来!<%= username %></div></a>
-				      	<!--<a href="">注销</a>-->
+				        <a href="/my"><div class="welcome">个人管理</div></a>
+				        <a href="#"><div class="set">欢迎回来!<%= username %> </div></a>
+				      	<!--<a href="/quit">注销</a>-->
 				      </div>
         		</form>
-        	<%}%>
-        		
-	          	
-	         
-        	
-        	
-        		
-        	
-        		
-        	
-          
-          
+        	<%}%>  
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -127,13 +134,24 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h1>
-        	<!--静态加载是以public为根目录-->
-        	<a href="/avatar/<%= avatar%>">
-        		  <!--点击全图放大-->
-        		<img src="../avatar/<%= avatar%>"/>
-        	</a>
+        
+        	 <div class="pic">
+	        	<!--静态加载是以public为根目录-->
+	        	<a href="/setavatar">
+	        		  <!--点击全图放大-->
+	        		<img src="../avatar/<%= avatar%>"/> 
+	        	</a>
+	        	
+        	</div>
+        	<div class="say">
+        		<% if(login){ %>
+        		
+        		
+        		<h5>个性签名:</h5><%= say%>
+        		<%}%>
+        	</div>
         	
+        	<h1>
         	Hello, world!
         </h1>
         <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>

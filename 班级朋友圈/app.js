@@ -35,10 +35,13 @@ app.post('/dosetavatar',router.dosetavatar);
 //处理头像
 app.get('/cut',router.showCut);
 //执行切图
-app.get('docut',router.doCut);
-
-
-
+app.get('/docut',router.doCut);
+//个人管理
+app.get('/my',router.showMy);
+//个人管理处理
+app.get('/dochange',router.doChange);
+//退出
+//app.get('/quit',router.showQuit);
 
 
 

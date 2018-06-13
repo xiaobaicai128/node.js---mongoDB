@@ -5,6 +5,7 @@ var session = require('express-session');
 var ejs = require('ejs');
 var path = require('path');
 var fs = require('fs');
+var gm = require('gm');
 //首页
 exports.showIndex = function(req,res,next){
 	//查询数据库 如果登录就用存储的头像，否则用默认头像
@@ -14,7 +15,10 @@ exports.showIndex = function(req,res,next){
 			res.render('index.ejs',{
 				"login":req.session.login == 3 ? true: false,
 				"username":req.session.login == 3? ' '+req.session.username : '',
+				"say":req.session.login == 3?  result[0].mySay:'***',
+				'sex': req.session.login == 3? result[0].sex : '*',
 				"avatar":avatar
+				
 			});
 		})
 	} else{
@@ -107,11 +111,11 @@ exports.doLogin = function(req,res,next){
 }
 //设置头像页面
 exports.showSetAvatar = function(req,res,next){
-//	if(req.session.login == 3){
+	if(req.session.login == 3){
 		res.render('setAvatar.ejs');
-//	} else{
-//		res.send('请先登录！')
-//	}
+	} else{
+		res.send('请先登录！')
+	}
 	
 }
 //上传头像
@@ -151,18 +155,62 @@ exports.doCut = function(req,res,next){
     var x = req.query.x;
     var y = req.query.y;
     gm('./avatar/'+filename)
-     .corp(w,h,x,y)
+     .crop(w, h, x, y)
      .resize(100,100,'!') 
      .write('./avatar/'+filename,function(err,result){
+     	
      	if(err){
-     		next();
+     		res.send('-4')
      		return;
      	}
-     	res.send('4')
+     	//更改数据库中的avatar
+     	db.updateMany('pengyouquan',{'username':req.session.username},
+     	{$set:{'avatar':req.session.avatar}},function(err,result){
+     		if(err){
+     			next();
+     			return;
+     		}
+     		res.send('4');
+     		
+     	});
+     		
      })
 }
+//个人管理
+exports.showMy = function(req,res,next){
+	if(req.session.login == 3){
+		res.render('my.ejs');
+	} else{
+		res.send('请先登录！')
+	}	
+}
+//处理个人管理
+exports.doChange = function(req,res,next){
+	var newUsername = req.query.username == ''? req.session.username : req.query.username ;
+	var sex = req.query.sex;
+	var mySay = req.query.mysay;
+	var Location = req.query.location;
+	console.log(mySay)
+//	
+	db.updateMany('pengyouquan',{'username':req.session.username},
+     	{$set:{'username':newUsername,'sex':sex,'location':Location,'mySay':mySay}},function(err,result){
+     		if(err){
+     			next();
+     			return;
+     		}
+     		req.session.mySay = mySay;
+     		res.send('6');
+     		
+     	});
+}
 
-
+//退出
+//exports.showQuit = function(req,res,next){
+//	res.end(function(err,result){
+//		res.send('6')
+//		
+//	});
+//}
 
 
 
