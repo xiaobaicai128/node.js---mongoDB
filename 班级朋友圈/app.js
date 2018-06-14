@@ -40,6 +40,14 @@ app.get('/docut',router.doCut);
 app.get('/my',router.showMy);
 //个人管理处理
 app.get('/dochange',router.doChange);
+//发表说说
+app.post('/report',router.doReport);
+
+
+
+
+
+
 //退出
 //app.get('/quit',router.showQuit);
 

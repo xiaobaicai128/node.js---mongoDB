@@ -12,6 +12,33 @@ function _connectDB(callback){
 	});
 }
 
+////创建索引
+//exports.createIndex = function(collectionName,indexName,callback){
+//	_connectDB(function(err,db){
+//		if(err){
+//			return;
+//		}
+//		db.collection(collectionName).createIndex(
+//			{indexName:1,null,function(err,result){
+//				callback(err,result);
+//			}
+//		});
+//	})
+//}
+init();
+function init(){
+	_connectDB(function(err,db){
+		if(err){
+			return;
+		}
+		db.collection('pengyouquan').createIndex(
+			{'username':1},null,function(err,result){
+				console.log('索引创建完成')
+			}
+		);
+	})
+}
+
 //封装插入函数
 exports.insertOne = function(collectionName,json,callback){
 	//调用内部链接数据库函数

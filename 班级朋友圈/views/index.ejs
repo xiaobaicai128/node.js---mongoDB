@@ -50,10 +50,31 @@
 		font-size: 1.7em;
 		float: right;
 		font-family: '隶书';
-		
+		margin-top: -98px;
 	}
 	h5{
 		display: inline;
+	}
+	h4{
+		width: 100px;
+		margin-left: 33px;
+		color: #000;
+	}
+	#text{
+		margin: -28px 140px;
+		border-radius: 10px;
+		box-shadow: 1px 1px 2px gray;
+		text-decoration: none;
+		overflow: none;
+			}
+	#text:hover{
+		box-shadow: 2px 2px 2px black;
+	}
+	.report{
+		margin: -18px 748px;
+	}
+	.more{
+		font-size: 12px !important;
 	}
 </style>
     <title>my 朋友圈</title>
@@ -95,6 +116,7 @@
 	        <li class="active"><a href="#">首页 <span class="sr-only">(current)</span></a></li>
 	        
 	        <li><a href="#">我的说说</a></li>
+	        <li><a href="#">我的好友</a></li>
 	      </ul>
           
         </div>
@@ -135,49 +157,84 @@
     <div class="jumbotron">
       <div class="container">
         
-        	 <div class="pic">
-	        	<!--静态加载是以public为根目录-->
-	        	<a href="/setavatar">
-	        		  <!--点击全图放大-->
-	        		<img src="../avatar/<%= avatar%>"/> 
-	        	</a>
-	        	
-        	</div>
-        	<div class="say">
-        		<% if(login){ %>
-        		
-        		
-        		<h5>个性签名:</h5><%= say%>
-        		<%}%>
-        	</div>
+        	 
         	
-        	<h1>
-        	Hello, world!
-        </h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        	
+        	<div class="jumbotron">
+			 
+			       <%if(!login){%>	
+			        <h1>Hello, 同学们!</h1>
+			        <p>欢迎踊跃发言、吐槽、灌水、爆照.</p>
+			        <p><a class="btn btn-primary btn-lg" href="/login" role="button">加入我们 &raquo;</a></p>
+						<%} else{%>
+							<div class="pic">
+			        	<!--静态加载是以public为根目录-->
+			        	<a href="/setavatar">
+			        		  <!--点击全图放大-->
+			        		<img src="../avatar/<%= avatar%>"/> 
+			        	</a>
+		        </div>
+		        	<h4><%= username%></h4>
+		        	
+		        	<div class="say">
+		        		<% if(login){ %>
+		        		<h5>个性签名:</h5><%= say%>
+		        		<%}%>
+		        	</div>
+		        	 <div class="col-lg-4 col-md-3">
+		        		<textarea name="text" rows="3" id="text" cols="80" placeholder="give you some color to saysay"></textarea>
+								<a id="report" class="btn btn-success report"  >发表</a>
+		        		<!--<input type="button" name="report" id="aa" lass="btn btn-success report" value="发布" />-->
+		        	</div>
+		        	
+							<%}%>
+        	</div>
+    
       </div>
-    </div>
-
+				
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
+        <div class="col-md-6">
+        	<!--遍历数据库-->
+        	<% if(login){ %>
+		        		
+		        		<!--此处使用ejs 后太自己做  也可以吧数据返回给前台 用angular等做-->
+          	<%for(var i=0;i<shuoshuo.length;i++){%>
+          	
+					<!--<div id="liuyankuai">-->
+						<!--<a href="#" class="list-group-item active">-->
+							
+					    <h3 ><%= shuoshuo[i].username%></h3>
+					    <!--<h5>个性签名:</h5><%= say%>-->
+					  
+					    <p class="list-group-item active"><%= shuoshuo[i].text%></p>
+					    
+					    <p><a class="btn btn-default more" href="#" role="button">查看详细 &raquo;</a></p>
+					    <!--<p><a href="/remove?id={{= id}}" class="remove" >删除</a></p>-->
+				  	<!--</a>-->
+				
+				<!--</div>--> 
+          	
+          	
+          	
+          	<%}%>
+          
+          <%}else{%>
+          	 </div>
         <div class="col-md-4">
           <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <img src="/image/2.jpg" width="150%"/>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
        </div>
         <div class="col-md-4">
           <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <img src="/image/11.jpg" width="150%"/>
           <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
       </div>
+          <%}%>
+       
 
       <hr>
 
@@ -185,7 +242,7 @@
         <p>&copy; 2016 Company, Inc.</p>
       </footer>
     </div> <!-- /container -->
-
+		
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -195,5 +252,17 @@
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript">
+				$('#report').click(function(){
+  					$.post('/report',{'text':$('#text').val()},function(result){
+  						if(result == 7){
+  							alert('ok');
+  							window.location = '/';
+  						} else{
+  							alert('defeat');
+  						}
+  					})
+  		  })
+		</script>
   </body>
 </html>

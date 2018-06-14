@@ -12,14 +12,18 @@ exports.showIndex = function(req,res,next){
 	if(req.session.login == 3){
 		db.find('pengyouquan',{'username':req.session.username},function(err,result){
 			var avatar = result[0].avatar || 'moren.jpg';
-			res.render('index.ejs',{
-				"login":req.session.login == 3 ? true: false,
-				"username":req.session.login == 3? ' '+req.session.username : '',
-				"say":req.session.login == 3?  result[0].mySay:'***',
-				'sex': req.session.login == 3? result[0].sex : '*',
-				"avatar":avatar
-				
-			});
+			db.find('shuoshuo',{},{'sort':{'date':-1}},function(err,result2){
+				res.render('index.ejs',{
+					"login":req.session.login == 3 ? true: false,
+					"username":req.session.login == 3? ' '+req.session.username : '',
+					"say":req.session.login == 3?  result[0].mySay:'***',
+					'sex': req.session.login == 3? result[0].sex : '*',
+					"avatar":avatar,
+					'shuoshuo': result2
+				});
+			})
+			
+			
 		})
 	} else{
 		res.render('index.ejs',{
@@ -32,6 +36,7 @@ exports.showIndex = function(req,res,next){
 }
 //注册
 exports.showRegist = function(req,res,next){
+	
 	res.render('regist.ejs');
 }
 
@@ -182,6 +187,7 @@ exports.showMy = function(req,res,next){
 		res.render('my.ejs');
 	} else{
 		res.send('请先登录！')
+		return;
 	}	
 }
 //处理个人管理
@@ -203,6 +209,40 @@ exports.doChange = function(req,res,next){
      		
      	});
 }
+//发表说说
+exports.doReport = function(req,res,next){
+	if(req.session.login != 3){
+		res.send('请先登录！')
+		return;
+	} 
+	var username = req.session.username;
+	
+	var form = new formidable.IncomingForm();
+	form.parse(req,function(err,fields,files){
+		var text = fields.text;
+		db.insertOne('shuoshuo',{'username':req.session.username,'date':new Date(),'text':text},function(err,result){
+			if(err){
+				res.send('-7');
+				return;
+			}
+			res.send('7');
+		})
+	})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //退出
 //exports.showQuit = function(req,res,next){
