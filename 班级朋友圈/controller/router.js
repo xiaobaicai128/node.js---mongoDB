@@ -12,28 +12,28 @@ exports.showIndex = function(req,res,next){
 	if(req.session.login == 3){
 		db.find('pengyouquan',{'username':req.session.username},function(err,result){
 			var avatar = result[0].avatar || 'moren.jpg';
-			db.find('shuoshuo',{},{'sort':{'date':-1}},function(err,result2){
+//			db.find('shuoshuo',{},{'sort':{'date':-1}},function(err,result2){
 				res.render('index.ejs',{
 					"login":req.session.login == 3 ? true: false,
 					"username":req.session.login == 3? ' '+req.session.username : '',
 					"say":req.session.login == 3?  result[0].mySay:'***',
 					'sex': req.session.login == 3? result[0].sex : '*',
-					"avatar":avatar,
-					'shuoshuo': result2
+					"avatar":avatar
+//					'shuoshuo': result2    //使用前台模板 
 				});
 			})
 			
 			
-		})
-	} else{
+		}
+	 else{
 		res.render('index.ejs',{
 				"login":req.session.login == 3 ? true: false,
 				"username":req.session.login == 3? ' '+req.session.username : '',
 				'avatar':'moren.jpg'
 			});
 	}
-	
-}
+}	
+
 //注册
 exports.showRegist = function(req,res,next){
 	
@@ -196,8 +196,7 @@ exports.doChange = function(req,res,next){
 	var sex = req.query.sex;
 	var mySay = req.query.mysay;
 	var Location = req.query.location;
-	console.log(mySay)
-//	
+		
 	db.updateMany('pengyouquan',{'username':req.session.username},
      	{$set:{'username':newUsername,'sex':sex,'location':Location,'mySay':mySay}},function(err,result){
      		if(err){
@@ -226,8 +225,63 @@ exports.doReport = function(req,res,next){
 				return;
 			}
 			res.send('7');
+
 		})
 	})
+}
+////列出所有说说 分页
+exports.getAllShuoshuo = function(req,res,next){
+	var page = req.query.page;
+	db.find('shuoshuo',{},{'pageamount':6,'page':page,'sort':{'date':-1}},function(err,result){
+		res.json(result);
+	})
+}
+//得到某个用户信息
+exports.getUserInfo = function(req,res,next){
+	var username = req.query.username;
+	
+	db.find('pengyouquan',{'username':username},function(err,result){
+		if(err || result.length == 0){
+            res.json("");
+            return;
+        }
+        res.json(result);
+	})
+}
+//得到说说总数量
+exports.getAllamount = function(req,res,next){
+	db.getAllCount('pengyouquan',function(err,count){
+		res.send(count.toString())
+	})
+}
+//显示个人主页
+exports.showUser = function(req,res,next){
+	var username = req.params['id'];
+	username = username.replace(/\s+/g, ''); // 消除浏览器自带的空格  %20
+	db.find('shuoshuo',{'username':username},function(err,result){
+		db.find('pengyouquan',{'username':username},function(err,result2){
+			res.render('geren.ejs',{
+				'username':username,
+				'gerenshuoshuo':result,
+				'avatar':result2[0].avatar
+			});
+		})
+		
+	})
+	
+}
+//显示所有用户列表
+exports.showUserlist = function(req,res,next){
+	
+		db.find('pengyouquan',{},function(err,result){
+		
+			res.render('chengyuan.ejs',{
+				'username':req.session.username,
+				'suoyouchengyuan':result
+				
+			});
+		})
+	
 }
 
 
@@ -240,17 +294,12 @@ exports.doReport = function(req,res,next){
 
 
 
-
-
-
-
 //退出
-//exports.showQuit = function(req,res,next){
-//	res.end(function(err,result){
-//		res.send('6')
-//		
-//	});
-//}
+exports.showQuit = function(req,res,next){
+	req.session.login = -3;
+	
+	res.redirect('/');
+}
 
 
 

@@ -76,6 +76,20 @@
 	.more{
 		font-size: 12px !important;
 	}
+	.set_mysay{
+		 margin: -31px 108px;
+		 float: left;
+	}
+	h3{
+		width: 200px;
+	}
+	.avatar{
+		border-radius: 50%;
+		width: 40px;
+	}
+	.pagination{
+		height: 500px;
+	}
 </style>
     <title>my 朋友圈</title>
 
@@ -115,8 +129,8 @@
            <ul class="nav navbar-nav">
 	        <li class="active"><a href="#">首页 <span class="sr-only">(current)</span></a></li>
 	        
-	        <li><a href="#">我的说说</a></li>
-	        <li><a href="#">我的好友</a></li>
+	        <li><a href='/user/<%=username %>'>我的说说</a></li>
+	        <li><a href="/userlist">我的好友</a></li>
 	      </ul>
           
         </div>
@@ -144,8 +158,8 @@
 				      </div>  -->
 				      <div class="show">
 				        <a href="/my"><div class="welcome">个人管理</div></a>
-				        <a href="#"><div class="set">欢迎回来!<%= username %> </div></a>
-				      	<!--<a href="/quit">注销</a>-->
+				        <div class="set">欢迎回来!<%= username %> <a href="/quit" class="set">注销</a></div>
+				      	
 				      </div>
         		</form>
         	<%}%>  
@@ -198,27 +212,18 @@
         <div class="col-md-6">
         	<!--遍历数据库-->
         	<% if(login){ %>
-		        		
-		        		<!--此处使用ejs 后太自己做  也可以吧数据返回给前台 用angular等做-->
-          	<%for(var i=0;i<shuoshuo.length;i++){%>
+     		
+          	<!--使用前台模板做-->
+          	<div class="shuoshuo">
+          		<!--站位-->
+          	</div>
           	
-					<!--<div id="liuyankuai">-->
-						<!--<a href="#" class="list-group-item active">-->
-							
-					    <h3 ><%= shuoshuo[i].username%></h3>
-					    <!--<h5>个性签名:</h5><%= say%>-->
-					  
-					    <p class="list-group-item active"><%= shuoshuo[i].text%></p>
-					    
-					    <p><a class="btn btn-default more" href="#" role="button">查看详细 &raquo;</a></p>
-					    <!--<p><a href="/remove?id={{= id}}" class="remove" >删除</a></p>-->
-				  	<!--</a>-->
-				
-				<!--</div>--> 
-          	
-          	
-          	
-          	<%}%>
+          	<!--分页-->
+			<nav aria-label="Page navigation">
+			  <ul class="pagination">
+			   
+			  </ul>
+			</nav>
           
           <%}else{%>
           	 </div>
@@ -252,6 +257,10 @@
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript" src="/js/underscore.no-flect.js"></script>
+    	
+    
+    
     <script type="text/javascript">
 				$('#report').click(function(){
   					$.post('/report',{'text':$('#text').val()},function(result){
@@ -264,5 +273,81 @@
   					})
   		  })
 		</script>
+		
+		<script type="text/template" id="muban">
+<!--//			<a href="#" class="list-group-item active">-->
+							
+					   <h3 ><img src='/avatar/{{=avatar}}'class="avatar"> {{=username}} </h3>
+					    <h5 class="set_mysay">个性签名:{{=mysay}}</h5>
+					    <p class="list-group-item active">{{=tiezineirong}}</p>
+					   <p><a class="btn btn-default more" href="#" role="button">查看详细 &raquo;</a></p>
+					  
+				  	<!--</a>-->
+		</script>
+  	
+  	<script type="text/javascript">
+  		
+  		var compiled = _.template($('#muban').html());
+  		getShuoshuo(0);
+  		function getShuoshuo(page){
+  			$.get('/getallshuoshuo?page='+page,function(result){
+  				
+  				iterator(0);  //异步转为同步
+  			//迭代器
+					function iterator(i){
+						
+							if(i == result.length){
+									return;
+							}	
+							$.get('/getuserinfo?username='+result[i].username,function(result2){
+							
+									
+									result[i].avatar = result2[0].avatar;
+									result[i].mysay = result2[0].mySay;
+									
+									//组装模板
+//                var htmlstring = compiled(result[i]);
+//                //添加DOM
+//                $(".shuoshuo").append($(htmlstring));
+									var html = compiled({'username':result[i].username,'avatar':result[i].avatar,'mysay':result[i].mysay,'tiezineirong':result[i].text});
+									$('.shuoshuo').append($(html));
+									
+									iterator(i+1);
+							})
+							 
+					}
+				})		
+  		}	
+  	</script>
+<script type="text/javascript">
+	  
+	  $.get('getallamount',function(count){
+	  	var all = parseInt(count);
+	 
+	  	var pageamount = Math.ceil(all/6);
+	  	for(var i=0;i<pageamount;i++){
+	  		$('.pagination').append("<li><a href = '#'>"+(i+1)+"</a></li>");	
+	  	}
+	  	$('.pagination').addClass('active');
+	  	$('.pagination li').click(function(){
+	  		$('.shuoshuo').html('');
+	  		var page = $(this).index();
+	  		console.log(page)
+	  		getShuoshuo(page);
+	  		$(this).addClass('active').siblings().removeClass('active');
+	  	})
+	  })
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+</script>		
+		
   </body>
 </html>

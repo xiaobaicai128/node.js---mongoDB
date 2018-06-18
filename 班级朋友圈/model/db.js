@@ -25,6 +25,7 @@ function _connectDB(callback){
 //		});
 //	})
 //}
+
 init();
 function init(){
 	_connectDB(function(err,db){
@@ -38,6 +39,7 @@ function init(){
 		);
 	})
 }
+
 
 //封装插入函数
 exports.insertOne = function(collectionName,json,callback){

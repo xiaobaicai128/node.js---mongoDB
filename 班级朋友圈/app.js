@@ -42,14 +42,19 @@ app.get('/my',router.showMy);
 app.get('/dochange',router.doChange);
 //发表说说
 app.post('/report',router.doReport);
-
-
-
-
-
+//ajax服务 列出所有说说
+app.get('/getallshuoshuo',router.getAllShuoshuo)
+//得到某个用户信息
+app.get('/getuserinfo',router.getUserInfo)
+//得到说说总数量 为分页作准备
+app.get('/getallamount',router.getAllamount)
+//显示用户个人所有说说
+app.get('/user/:id',router.showUser)
+//显示所有用户
+app.get('/userlist',router.showUserlist)
 
 //退出
-//app.get('/quit',router.showQuit);
+app.get('/quit',router.showQuit);
 
 
 
