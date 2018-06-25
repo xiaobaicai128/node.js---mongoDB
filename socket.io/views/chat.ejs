@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title><%= username%>chartroom</title>
+		<style type="text/css">
+			body{
+				font: 13px helvetica,arial;
+			}	
+			form{
+					background: #000;
+					padding: 3px;
+					position: fixed;
+					bottom: 0;
+					width: 100%;
+			}
+			form input{
+				border: 0;
+				padding: 10px;
+				width: 85%;
+				margin-right: 0.5%;	
+			}		
+			form button{
+				width: 9%;
+				background: rgb(130,224,255);
+				border: none;
+				padding: 10px;
+			}
+			#message{
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			#message li{
+				padding: 5px 10px;
+				
+			}
+			#message li:nth-child(odd){
+				background: #eee;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<h3>
+			欢迎 <%= username%>
+		</h3>
+		<ul id="message"></ul>
+		<form action="" >
+			<input type="" name="message" id="m" value="" />
+			<button>发送</button>
+			
+		</form>
+		
+	</body>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script src="./js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript">
+		var socket = io();
+		
+//		console.log(<%= username%>)
+		<%if(login){%>
+//			var name = prompt('请确认您的名称：');
+			var name = $('h3').html();
+//			console.log()
+			//发送昵称给后端
+			socket.emit('join',name);
+//			document.title = name + '的群聊'
+			//接受到服务器发送来的join事件
+			socket.on('join',function(name){
+				
+				addLine(name + '加入群聊');
+				
+			})
+		<%}%>
+		
+		
+		$('form').submit(function(){
+			var msg = $('#m').val();
+			
+			socket.emit('message',{
+				"neirong" :  $('#m').val()
+					
+			}); //将消息发送给服务器
+			$('#m').val(''); //清空输入框
+			return false;//阻止form提交
+		})
+		
+		//接受后台发来的message事件
+		socket.on('message',function(msg){
+			$("#message").prepend("<li>"+ msg.neirong + "</li>");
+		})
+		
+		
+		function addLine(msg){
+			$('#message').append($('<li>').text(msg));
+		}
+	</script>	
+	
+</html>

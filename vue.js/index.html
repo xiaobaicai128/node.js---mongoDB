@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<script src="js/vue.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var vm = new Vue({
+				el:'.box',
+				data:{msg:['AA','BB','CC']}
+			})
+		}
+	</script>
+	<body>
+		<div class="box">
+			<ul>
+				<li v-for="(v,index) in msg">
+					{{v}}+ {{index}} {{k}}
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>

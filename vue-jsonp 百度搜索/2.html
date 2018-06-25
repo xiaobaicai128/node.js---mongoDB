@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>智能社——http://www.zhinengshe.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        .gray{
+            background: #ccc;
+        }
+    </style>
+    <script src="js/vue.js"></script>
+    <script src="js/vue-resouce.js"></script>
+    <script>
+        window.onload=function(){
+            new Vue({
+                el:'#box',
+                data:{
+                    myData:[],
+                    t1:'',
+                    now:-1
+                },
+                methods:{
+                    get:function(ev){
+                        if(ev.keyCode==38 || ev.keyCode==40)return;
+ 
+                        if(ev.keyCode==13){
+                            window.open('https://www.baidu.com/s?wd='+this.t1);
+                            this.t1='';
+                        }
+ 
+                        this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su',{
+                            wd:this.t1
+                        },{
+                            jsonp:'cb'
+                        }).then(function(res){
+                            this.myData=res.data.s;
+                        },function(){
+                             
+                        });
+                    },
+                    changeDown:function(){
+                        this.now++;
+                        if(this.now==this.myData.length)this.now=-1;
+                        this.t1=this.myData[this.now];
+                    },
+                    changeUp:function(){
+                        this.now--;
+                        if(this.now==-2)this.now=this.myData.length-1;
+                        this.t1=this.myData[this.now];
+                    },
+                    searchLink: function(index) {//鼠标点击跳转
+        this.t1 = this.searchList[index]
+        this.now = index
+        window.open('https://www.baidu.com/s?wd=' + this.t1)
+        this.t1 = ''
+      }
+
+
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+    <div class="searchBox" id="app">
+        <div class="search-wrapper">
+            <input class="searchInput" type="text" v-model="t1" @keyup="get($event)" @keydown.down="next" @keydown.up.prevent="last">>
+            <button>百度一下</button>
+        </div>
+        <ul>
+            <li v-for="(value, index) in searchList" :class="{active: index == now}">{{value}}</li>
+        </ul>
+        <!-- <p v-show="searchList.length == 0">暂无数据...</p> -->
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.3.4/vue-resource.min.js"></script>
+<script>
+  new Vue({
+    el: "#app",
+    data: {
+      searchList: [],//搜索弹出列表
+      t1: '',//输入框里面的值
+      now: -1//输入框里面的值的索引，0为列表第一项
+    },
+    methods: {
+      get: function(evt) {
+      	
+      	if(evt.keyCode == 38 || evt.keyCode == 40){
+									return;
+								}
+		if(evt.keyCode == 13){
+									
+				window.open('https://www.baidu.com/s?wd='+this.t1); 
+								
+					this.t1 = '';
+		}
+      	
+	       this.$http.jsonp("https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",
+							      {//请求参数
+							        params: {
+							          wd:this.it
+							        },
+							        jsonp:'cb'
+							      }).then(function(res){
+									this.myData = res.data.s;
+								})
+							      
+							},	
+       
+      next: function() {//向下选择
+        this.now ++
+        if(this.now == this.searchList.length){//判断是否超出
+          this.now = 0
+        }
+        this.t1 = this.searchList[this.now]
+      },
+      last: function() {//向上选择
+        this.now --
+        if(this.now < 0){
+          this.now = this.searchList.length -1
+        }
+        this.t1 = this.searchList[this.now]
+      }
+    }
+  })
+</script>
+</html>
